@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 3: Bases de datos, modelos y migraciones](#)
+						## [Clase 8](#)
+						### Validaciones de datos.
+						---
+						## [Callbacks en los modelos](#)
+						---
+						[Descripción general](#)
+						- Los callbacks son métodos que se llaman en ciertos momentos del ciclo de vida de un objeto. 
+						- Con los callbacks, es posible escribir código que se ejecutará cada vez que se cree, guarde, actualice, elimine, 
+						valide o cargue un objeto Active Record desde la base de datos.
+						---
+						[Creación de callbacks](#)
+
+						- El primer paso para implemantar un callback, es creado dentro de un modelo. 
+						- Los callbacks se pueden implementar como métodos convencionales.
+						---
+
+						A modo de ejemplo, crearemos un callback que nos permita capitalizar todas las palabras del nombre de una serie:
+						
+						```ruby
+						class TvShow < ApplicationRecord
+							before_save :capitalize_name
+
+							private
+							def capitalize_name
+								splited_names = self.name.split # ~> ["game", "of", "thrones"]
+								capitalized_words = splited_names.map { |splited_name| splited_name.capitalize } # ~> ["Game", "Of", "Thrones"]
+								self.name = capitalized_words.join(' ') # ~> "Game Of Thrones"
+							end
+						end
+						```
+						---
+
+						[Recomendaciones:](#)
+
+						- Se considera una buena práctica declarar los callbacks como privados. 
+						- Si se dejan públicos, se pueden llamar desde fuera del modelo y violar el principio de encapsulación de objetos.
+
+						---
+
+						[Algunos de los callbacks más usados](#)
+
+						- Creando un registro
+							* [before_validation](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveModel/Validations/Callbacks/ClassMethods.html#method-i-before_validation)
+							* [after_validation](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveModel/Validations/Callbacks/ClassMethods.html#method-i-after_validation)
+							* [before_save](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_save)
+							* [around_save](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_save)
+							* [before_create](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-before_create)
+							* [around_create](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-around_create)	
+							* [after_create](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_create)
+							* [after_save](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Callbacks/ClassMethods.html#method-i-after_save)
+							* [after_commit/after_rollback](https://api.rubyonrails.org/v7.0.2.4/classes/ActiveRecord/Transactions/ClassMethods.html#method-i-after_rollback)
+
+						---
+						## [Validaciones.](#) 
+						Aquí hay un ejemplo de una validación muy simple:
+
+						```ruby
+						class TvShow < ApplicationRecord
+							validates :name, presence: true
+						end
+						```
+						```console
+						irb> TvShow.create(name: "Band of Brothers").valid?
+						=> true
+						irb> TvShow.create(name: nil).valid?
+						=> false
+						```
+						---
+						Como se puede ver, nuestra validación nos permite saber que un TvShow es válido sin un atributo name. 
+
+						---
+						[Por qué utilizar validaciones?](#)
+						
+						Las validaciones se utilizan para garantizar que solo se guarden datos válidos en su base de datos. 
+						---
+						Los siguientes métodos desencadenan validaciones y guardarán el objeto en la base de datos solo si el objeto es válido:
+
+						- create
+						- create!
+						- save
+						- save!
+						- update
+						- update!
+						
+						Las comandos con **!** (por ejemplo, create!) generan una excepción si el registro no es válido.
+						---
+						[Tipos de validaciones(helpers de validación)](#)
+						---
+						[Longitud](#)
+						
+						```ruby
+						class TvShow < ApplicationRecord
+							validates :name, length: { minimum: 5 }
+						end
+						````
+						---
+						[Uniqueness](#)
+
+						```ruby
+						class TvShow < ApplicationRecord
+							validates :name, uniqueness: true
+						end
+						```
+
+						---						
+						## [Atributos por defecto.](#)
+						
+						En rails tambien se pueden crear valores por defecto para una columna.
+						---
+
+						Primero vamos a crear una migración nueva que va a modificar la columna [rating](#)
+
+						```console
+						rails generate migration addDefaultValueToColumnRating
+						```
+						---
+
+						Con esto generaremos un archivo que contendrá la migración para generar un valor por defecto en una columna de la tabla
+
+						```ruby
+						class AddDefaultValueToColumnRating < ActiveRecord::Migration[6.1]
+							def change
+								change_column :tv_shows, :rating, :float, default: 0.0
+							end
+						end
+						```
+
+						En este caso le indicamos que la columna **rating** tome valor **0.0** en caso de no ingresar un dato
+						---
+						## [Ingreso de valores utilizando Seeds.](#)
+
+						Rails contiene un archivo en **db/seeds.rb**, que nos sirve para poblar de datos de manera inicial nuestra base de datos.
+
+						La finalidad de este archivo es que nuestra base de datos contenga cierta información inicial.
+						---
+
+						Ahora vamos a ver un ejemplo simple de como cargar datos mediante un seed:
+						---
+
+						primero copiamos la siguiente información en **db/seeds.rb**
+
+						```ruby
+						puts 'creando series de tv...'
+
+						TvShow.destroy_all
+
+						TvShow.create(
+							[
+								{
+									name: 'game of thrones',
+									summary: 'Years after a rebellion spurred by a stolen bride to be and the blind ambitions of a mad King',
+									release_date: '2011-04-17',
+									rating: 7.8
+								},
+								{
+									name: 'Squid Game',
+									summary: 'The series revolves around Seong Gi-hun, a divorced and indebted chauffeur, who is invited to play a series of children\'s games for a chance earning a large cash prize.' ,
+									release_date: '17-09-2021',
+									rating: 5.6
+								},
+								{
+									name: 'Angry Birds',
+									summary: 'Red, an angry bird, has been an outcast from Bird Island ever since he was a hatchling due to his short temper and his huge, jet-black eyebrows.',
+									release_date: '05-02-2016',
+									rating: 6.1
+								},
+								{
+									name: 'Jaws 2',
+									summary: 'Chief Brody suspecting another great white shark is terrorizing the fictional sea side resort of Amity Island, following a series of incidents and disappearances, and his suspicions are eventually proven true.',
+									release_date: '16-06-1978',
+									rating: 9.8
+								},
+								{
+									name: 'Agatha Christie\'s Crooked House',
+									summary: 'The granddaughter of late Greek-British business tycoon Aristide Leonides, Sophia Leonides, visits private investigator Charles Hayward in his office.',
+									release_date: '31-10-2017',
+									rating: 8.6
+								},
+								{
+									name: 'Blade Runner: The Final Cut',
+									summary: 'A blade runner must pursue and terminate four replicants who stole a ship in space, and have returned to Earth to find their creator.',
+									release_date: '25-06-1982',
+									rating: 6.5
+								}
+							]
+						)
+
+						puts 'finalizado!!!'
+						```
+						---
+
+						Una vez definida la información, procedemos a cargarla mediante el comando:
+
+						```console
+						$ rails db:seed
+						```
+						---
+						## [Qué vimos hoy?](#)
+						- Que es un callback y su utilidad en los modelos. 
+						- Que son las validaciones y su uso. 
+						- Como asignar valores por defecto a un atributo.
+						- como ingresar datos utilizando Seeds.
+
+						---
+						## [Bibliografía](#)
+						- [https://guides.rubyonrails.org/active_record_callbacks.html](https://guides.rubyonrails.org/active_record_callbacks.html)
+						- [https://guides.rubyonrails.org/active_record_validations.html](https://guides.rubyonrails.org/active_record_validations.html)
+						- [https://api.rubyonrails.org/classes/AbstractController/Callbacks/ClassMethods.html](https://api.rubyonrails.org/classes/AbstractController/Callbacks/ClassMethods.html)
+						- [https://localcoder.org/rails-how-do-i-create-a-default-value-for-attributes-in-rails-activerecords-mo](https://localcoder.org/rails-how-do-i-create-a-default-value-for-attributes-in-rails-activerecords-mo)
+						- [https://github.com/datacamp/community-groupby/blob/master/data/chasewillden-netflix-shows/data/netflix.csv](https://github.com/datacamp/community-groupby/blob/master/data/chasewillden-netflix-shows/data/netflix.csv)
+						- [API IMDB para extraer info de películas](https://imdb-api.com/api/#IMDbList-header)
+					</textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 1: Crear un proyecto en Rails](#)
+						## [Clase 1](#)
+						### Introducción a Ruby on Rails
+						---
+						## [Que veremos hoy?](#)
+						- Introducción a Rails: Crear un proyecto Rails.
+						- El rol de un servidor.
+						- Levantar y cerrar un servidor con Rails.
+						- Leyendo el output del servidor.
+						---
+						## [Qué es Ruby on Rails?](#)
+						- Framework de aplicaciones web de código abierto escrito en Ruby.
+						- Implementa el paradigma del patrón Modelo Vista Controlador (MVC). 
+						- Menos código que con otros frameworks y con un mínimo de configuración. 
+						- Metaprogramación: sintaxis más simple de entender(se busca evitar el uso de comentarios en el código).
+						- Fue escrito por David Heinemeier Hansson.
+						---
+						### [Filosofía](#)
+						Los principios fundamentales de Ruby on Rails incluyen:
+
+						- [Don't repeat yourself(DRY):](#) evitar código redundante en una aplicación RoR.
+
+						- [Convention over Configuration](#): respetar las convenciones de la comunidad de RoR a la hora de
+						configurar nuestro proyecto.
+
+						---
+						### [Creación de un proyecto en Ruby on Rails](#)
+
+						- En nuestra terminal de comandos utilizamos [rails new [nombre-proyecto]](#) para crear un nuevo proyecto:
+						```console
+						$ rails new my_favorite_tv_series
+						- Nos movemos a la carpeta de proyecto que acabamos de crear:
+						```console
+						$ cd my_favorite_tv_series
+						```
+						---
+						## [Servidor web Integrado](#)
+						- El framework nos proporciona por defecto un [servidor web](https://puma.io/) integrado dentro del proyecto,
+						el cual no permitirá visualizar el progreso de nuestro trabajo en el navegador web(ej: Google chrome)
+						
+						Para levantar nuestro proyecto en un servidor web ejecutamos en la terminal de comandos
+						lo siguiente:
+						```console
+						$ rails server
+						```
+						---
+
+						- El siguiente mensaje nos indicará que podemos acceder a nuestro proyecto en nuestro navegador
+						, ingresando la URL [http://127.0.0.1:3000](http://127.0.0.1:3000):
+
+						```console
+						=> Booting Puma
+						=> Rails 6.1.5.1 application starting in development 
+						=> Run `bin/rails server --help` for more startup options
+						Puma starting in single mode...
+						* Puma version: 5.6.4 (ruby 3.0.2-p107) ("Birdie's Version")
+						*  Min threads: 5
+						*  Max threads: 5
+						*  Environment: development
+						*          PID: 18394
+						* Listening on http://127.0.0.1:3000
+						* Listening on http://[::1]:3000
+						Use Ctrl-C to stop
+						```
+						---
+						- Ingresando a nuestro navegador, podremos ver una imagen como la siguiente: 
+						<img src="https://guides.rubyonrails.org/v6.1/images/getting_started/rails_welcome.png" alt="Yay! You're on Rails!" width= 500 height = 400 style="margin-left: 200px;">
+						---
+						## [Detener el servidor](#)
+						- Podemos "apagar" el servidor con el comando [Ctrl + C](#)
+						---
+						## [Que aprendimos hoy?](#)
+						- Como crear un proyecto Rails.
+						- Como levantar y cerrar un servidor con Rails.
+						- Como visualizar nuestro proyecto en el navegador.
+						---
+						## [Bibliografía](#)
+						- [https://guides.rubyonrails.org](https://guides.rubyonrails.org)
+						- [https://es.wikipedia.org/wiki/Ruby_on_Rails](https://es.wikipedia.org/wiki/Ruby_on_Rails)
+				
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

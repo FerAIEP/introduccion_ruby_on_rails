@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 5: Arquitectura REST](#)
+						## [Clase 12](#)
+						### CRUD en Rails continuación
+						---
+						## [CRUD... continuación](#)
+
+						En esta clase continuaremos viendo las restantes acciones CRUD, la cuales son **UPDATE** y  **DELETE**
+						
+						---
+						## UPDATE
+
+						En caso que necesitemos editar un registro tenemos el link en la vista **show** que es el siguiente:
+						
+						```erb
+						link_to 'Edit', edit_tv_show_path(@tv_show)
+						```
+						---
+						Este link nos dirigirá a la vista **app/views/tv_shows/edit.html.erb** y en el controlar tendremos las siguientes acciones involucradas
+						
+						```ruby
+						def edit
+							@tv_show = TvShow.find(params[:id])
+						end
+
+						# ...
+
+						def update
+							@tv_show = TvShow.find(params[:id])
+							if @tv_show.update(tv_show_params)
+								redirect_to tv_show_url(@tv_show), notice: "Tv show was successfully updated."
+							else
+								render :edit, status: :unprocessable_entity
+							end
+  					end
+
+						# ...
+
+						def tv_show_params
+							params.require(:tv_show).permit(:name, :summary, :release_date, :rating)
+						end
+						```
+
+						---
+
+						En este caso la vista **app/views/tv_shows/edit.html.erb** tendrá el mismo aspecto que la vista **new** con la diferencia que
+						en vez de recibir un objeto **@tv_show** vacio, recibirá el objeto **@tv_show** con los datos a modificar.
+
+						```erb
+						<h1>Editing Tv Show</h1>
+
+						<%= form_with(model: @tv_show) do |form| %>
+								<%= form.label :name %><br>
+								<%= form.text_field :name %>
+								
+								<%= form.label :summary %><br>
+								<%= form.text_area :summary %>
+
+								<%= form.label :release_date %><br>
+								<%= form.datetime_select :release_date %>
+								
+								<%= form.label :rating %><br>
+								<%= form.text_field :rating %>
+
+								<%= form.submit %>
+						<% end %>
+
+						<%= link_to 'Back', tv_shows_path %>
+						```
+
+						Al igual que el método **create**, el método update nos llevará a la vista **show** en caso que la actulización resulte exitosa:
+
+						```ruby
+						if @tv_show.update(tv_show_params)
+								redirect_to tv_show_url(@tv_show), notice: "Tv show was successfully updated."
+						```
+						
+						Y en caso de una actualización fallida no enviará de nuevo al formulario edit:
+
+						```ruby
+						else
+								render :edit, status: :unprocessable_entity
+						```
+
+						---
+
+						## DELETE
+
+						Finalmente podemos encontar en el controlador la acción index que tiene este aspecto:
+
+						```ruby
+						def destroy
+							@tv_show = TvShow.find(params[:id])
+							@tv_show.destroy
+							redirect_to tv_shows_url, notice: "Tv show was successfully destroyed."
+						end
+						```
+						---
+						En la vista **app/views/tv_shows/index.html.erb** tenemos el link para eliminar un registro que tiene el siguiente formato:
+
+						```erb
+						<%= link_to 'Destroy', tv_show, method: :delete, data: { confirm: 'Are you sure?' } %>
+						```
+
+						Esta acción tan solo va a mostrar un cartel con la leyenda "Are you sure" para confirmar la eliminación de un registro
+
+						---
+
+						Si prestamos atención al inicio del controlador **app/controllers/tv_shows_controller.rb** tendremos la siguiente línea:
+
+						```ruby
+						before_action :set_tv_show, only: %i[ show edit update destroy ]
+						
+						# ...
+
+						def set_tv_show
+							@tv_show = TvShow.find(params[:id])
+						end
+						```
+						---
+						
+						El método **before_action** es un callback de controlador que tiene la finalidad, en este caso particular, de evitar
+						escribir de manera repetida la linea:
+
+						```ruby
+						@tv_show = TvShow.find(params[:id])
+						```
+						
+						Con lo cual no evitamos la repetición de código en nuestro controlador (DRY).
+
+						---
+
+						La idea de esta presentación es brindar una idea general y acotada de como crear un CRUD con rails. En caso de querer
+						indagar en algunos detalles se recomienda leer la guia oficial [Getting Started](https://guides.rubyonrails.org/v6.1/getting_started.html)
+						
+						---
+						## [Qué vimos hoy?](#)
+						- Que es un scaffold y cuales son su ventajas.
+						- Como es el ciclo completo de un CRUD en Rails.
+
+						---
+						## [Bibliografía](#)
+						- [https://guides.rubyonrails.org/v6.1/getting_started.html](https://guides.rubyonrails.org/v6.1/getting_started.html)
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

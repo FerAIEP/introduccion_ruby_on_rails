@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 5: Arquitectura REST](#)
+						## [Clase 14](#)
+						### Paginación.
+						---
+						## [Paginación](#)
+
+						- En las páginas web, a veces tienes muchas filas de información.
+						- En esa situación usamos paginación que nos permite dividir las filas en varias páginas
+						y ordenarlas en base a fecha, nombre u otro campo.
+
+						---
+						## [Biblioteca Kaminari](#)
+
+						Kaminari es una gemas más conocidas para poder implementar paginación de forma facil.
+
+						<img src="https://res.cloudinary.com/dhbkl5d9a/image/upload/v1653177485/modulo8/paginacio%CC%81n_cuuqt3.png" alt="">
+
+						---
+
+						Ahora veremos los pasos para instalar la gema e implementar la paginación de los datos:
+
+						Agregamos la gema al Gemfile
+
+						```ruby
+						gem 'kaminari', '~> 1.2', '>= 1.2.2'
+						```
+
+						Luego ejecutamos [bundle](#) para instalarla en el proyecto
+						---
+						Ahora vamos a agregar datos a nuestra tabla tv_shows con la idea de simular tener mucha información:
+
+						```ruby
+						# db/seed.rb
+						puts 'creando series de tv...'
+
+						TvShow.destroy_all
+
+						50.times do
+							TvShow.create(
+								[
+									{
+										name: 'game of thrones',
+										summary: 'Years after a rebellion spurred by a stolen bride to be and the blind ambitions of a mad King',
+										release_date: '2011-04-17',
+										rating: 7.8
+									},
+									{
+										name: 'Squid Game',
+										summary: 'The series revolves around Seong Gi-hun, a divorced and indebted chauffeur, who is invited to play a series of children\'s games for a chance earning a large cash prize.' ,
+										release_date: '17-09-2021',
+										rating: 5.6
+									},
+									{
+										name: 'Angry Birds',
+										summary: 'Red, an angry bird, has been an outcast from Bird Island ever since he was a hatchling due to his short temper and his huge, jet-black eyebrows.',
+										release_date: '05-02-2016',
+										rating: 6.1
+									},
+									{
+										name: 'Jaws 2',
+										summary: 'Chief Brody suspecting another great white shark is terrorizing the fictional sea side resort of Amity Island, following a series of incidents and disappearances, and his suspicions are eventually proven true.',
+										release_date: '16-06-1978',
+										rating: 9.8
+									},
+									{
+										name: 'Agatha Christie\'s Crooked House',
+										summary: 'The granddaughter of late Greek-British business tycoon Aristide Leonides, Sophia Leonides, visits private investigator Charles Hayward in his office.',
+										release_date: '31-10-2017',
+										rating: 8.6
+									},
+									{
+										name: 'Blade Runner: The Final Cut',
+										summary: 'A blade runner must pursue and terminate four replicants who stole a ship in space, and have returned to Earth to find their creator.',
+										release_date: '25-06-1982',
+										rating: 6.5
+									}
+								]
+							)
+						end
+
+						puts 'finalizado!!!'
+						```
+
+						y ejecutamos [rails db:seed](#) para actualizar nuestra tabla [tv_shows](#)
+
+						---
+
+						Ahora modificamos la acción [index](#) de [TvShowsController](#) con los siguiente:
+
+						```ruby
+						def index
+						  @tv_shows = TvShow.order(:name).page(params[:page])
+						end
+						```
+
+						---
+
+						Finalmente agregaremos un helper de kaminari que nos generará los links necesarios para navegar
+						entre páginas:
+
+						```erb
+						<!-- app/views/tv_shows/index.html.erb -->
+
+						<%= paginate @tv_shows %>
+						```
+						---
+						## [Rails API](#)
+
+						- Las API o Application Programming Interface se han vuelto muy populares hoy en día.
+						- Como vimos en el módulo 6 existes diferentes tipos de API según los datos que necesitamos obtener.
+						- Podemos configurar un applicación Ruby on Rails para que en vez de retornar una vista nos retorne
+						un archivo de tipo JSON para así funcionar como una API.
+
+						---
+
+						Por ejemplo podemos configurar la acción index de TvShow controller para que nos entregue el resultado en formato JSON:
+
+						```ruby
+						def index
+						  @tv_shows = TvShow.order(:name).page(params[:page])
+							render json: @tv_shows, status: :ok
+						end
+						```
+
+						El método [render](#) nos permite entregar un resultado en diferentes formatos como es el caso de JSON.
+
+						---
+						## [Qué vimos hoy?](#)
+						- Paginación.
+						- Biblioteca Kaminari.
+						- Rails API.
+
+						---
+						## [Bibliografía](#)
+						- [Artículo en el blog Medium sobre paginación](https://medium.com/alturasoluciones/pagination-in-rails-and-how-to-implement-go-to-page-functionality-3218cef6db43)
+						- [Documentación Kaminari](https://github.com/kaminari/kaminari)
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

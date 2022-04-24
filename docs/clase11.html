@@ -1,0 +1,273 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 5: Arquitectura REST](#)
+						## [Clase 11](#)
+						### Validaciones de datos.
+						---
+
+						## [Scaffold.](#)
+
+						Hoy vamos a ver el concepto de "Scaffold" o en español "andamio"
+
+						<img src="https://st.depositphotos.com/1757833/2377/i/600/depositphotos_23779237-stock-photo-scaffold.jpg" alt="" width="250" height="250">
+						---
+
+						El Scaffold es una herramienta que nos permite generar de manera rápida todos los "recursos" necesarios para tener una applicación Rails funcional en minutos.
+
+						Debemos tener en cuenta esta característica nos puede ser útil generalmente en un estorno de prueba o aprendizaje.
+
+						---
+
+						Vamos a ejecutar el siguiente comando en nuestra aplicación para generar el scaffold
+
+						```console
+						rails g scaffold tv_show name:string summary:text release_date:datetime rating:float
+						```
+						---
+
+						 y asi "magicamente" tendremos una aplicación Ruby on Rails con el CRUD completo **tv_shows**
+
+						<img src="https://res.cloudinary.com/dhbkl5d9a/image/upload/v1652665168/modulo8/vista_index_scaffold_eceox3.png" alt="">
+						
+						---
+						## [Implementación todos los métodos CRUD sin el generador de un scaffold manual.](#)
+
+						A partir de lo anteriormente desarrollado podemos facilmente describir el crud completo un Proyecto Rails.
+
+						---
+
+						Primero vamos a nuestro archivo de rutas en donde encontraremos lo siguiente:
+
+						```ruby
+						# config/routes.rb
+
+						resources :tv_shows
+						```
+						---
+
+						si verificamos las rutas mendiante el comando **rails routes -g tv_show** veremos que el método **resources** nos
+						generó una serie de rutas:
+
+						```console
+						$ rails routes -g tv_show
+						```
+
+						```console	
+      Prefix Verb   URI Pattern                  Controller#Action
+    tv_shows GET    /tv_shows(.:format)          tv_shows#index
+             POST   /tv_shows(.:format)          tv_shows#create
+ new_tv_show GET    /tv_shows/new(.:format)      tv_shows#new
+edit_tv_show GET    /tv_shows/:id/edit(.:format) tv_shows#edit
+     tv_show GET    /tv_shows/:id(.:format)      tv_shows#show
+             PATCH  /tv_shows/:id(.:format)      tv_shows#update
+             PUT    /tv_shows/:id(.:format)      tv_shows#update
+             DELETE /tv_shows/:id(.:format)      tv_shows#destroy
+						```
+
+						Con lo cuál observaremos que tenemos todas las rutas necesarias para nuestro proyecto.
+
+						---
+
+						Por el lado del controlador tendremos todas las acciones CRUD
+
+						A partir de ahora voy dividir el código generado en bloque segun la función que cumple dentro de este CRUD ademas
+						de un INDEX que se encarga de listar todos los registros creados
+
+						---
+
+						### INDEX
+
+						```ruby
+						def index
+							@tv_shows = TvShow.all
+						end
+						```
+						---
+						Como podemos observar tenemos **TvShow.all** de Active Record que nos permite traer todos los registros de la tabla tv_shows
+
+						todos estos registros serán llevados por la variable de instancia @tv_shows a la vista **app/views/tv_shows/index.html.erb**
+
+						---
+						```erb
+						<p id="notice"><%= notice %></p>
+
+						<h1>Tv Shows</h1>
+
+						<table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Summary</th>
+									<th>Release date</th>
+									<th>Rating</th>
+									<th colspan="3"></th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<% @tv_shows.each do |tv_show| %>
+									<tr>
+										<td><%= tv_show.name %></td>
+										<td><%= tv_show.summary %></td>
+										<td><%= tv_show.release_date %></td>
+										<td><%= tv_show.rating %></td>
+										<td><%= link_to 'Show', tv_show %></td>
+										<td><%= link_to 'Edit', edit_tv_show_path(tv_show) %></td>
+										<td><%= link_to 'Destroy', tv_show, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+									</tr>
+								<% end %>
+							</tbody>
+						</table>
+
+						<br>
+
+						<%= link_to 'New Tv Show', new_tv_show_path %>
+						```
+						---
+						Esta vista **index** nos listará los registros en un formato de tabla mostrando links para 
+						- Crear un nuevo registro.
+						- Acceder a los detalles de un registro en particular
+						- Editar(actualizar) un registro.
+						- Eliminar un registro
+					 
+						---
+						### CREATE
+						```ruby
+						def new
+							@tv_show = TvShow.new
+						end
+
+						# ...
+
+						def create
+							@tv_show = TvShow.new(tv_show_params)
+
+							if @tv_show.save
+								redirect_to tv_show_url(@tv_show), notice: "Tv show was successfully created."
+							else
+								render :new, status: :unprocessable_entity
+							end
+						end
+
+						# ...
+
+						def tv_show_params
+							params.require(:tv_show).permit(:name, :summary, :release_date, :rating)
+						end
+						```
+						--- 
+						La acción **new** , que se activa luego de hace click en el link "New Tv Show" en la vista **index**, nos enviará a la vista **app/views/tv_shows/new.html.erb** que contendrá un formulario para
+						el ingreso de datos:
+
+						```erb
+						<h1>New Tv Show</h1>
+
+						<%= form_with(model: @tv_show) do |form| %>
+								<%= form.label :name %><br>
+								<%= form.text_field :name %>
+								
+								<%= form.label :summary %><br>
+								<%= form.text_area :summary %>
+
+								<%= form.label :release_date %><br>
+								<%= form.datetime_select :release_date %>
+								
+								<%= form.label :rating %><br>
+								<%= form.text_field :rating %>
+
+								<%= form.submit %>
+						<% end %>
+
+						<%= link_to 'Back', tv_shows_path %>
+						```
+
+						---
+
+						## READ
+
+						Una vez creado el registro en el método **create**, veremos que la aplicación se direcciona hacia la vista **app/views/tv_shows/show.html.erb** con el nuevo registro creado, 
+						lo cual se describe en la linea:
+						
+						```ruby
+						redirect_to tv_show_url(@tv_show), notice: "Tv show was successfully created."
+						```
+
+						---
+
+						Dentro de la vista **show** tendremos el detalle del registro creado:
+						
+						```erb
+						<!--app/views/tv_shows/show.html.erb-->
+						<p>
+							<strong>Name:</strong>
+							<%= @tv_show.name %>
+						</p>
+
+						<p>
+							<strong>Summary:</strong>
+							<%= @tv_show.summary %>
+						</p>
+
+						<p>
+							<strong>Release date:</strong>
+							<%= @tv_show.release_date %>
+						</p>
+
+						<p>
+							<strong>Rating:</strong>
+							<%= @tv_show.rating %>
+						</p>
+
+						<%= link_to 'Edit', edit_tv_show_path(@tv_show) %> |
+						<%= link_to 'Back', tv_shows_path %>
+						```
+						---
+						## [Qué vimos hoy?](#)
+						- Que es un scaffold y cuales son su ventajas.
+						- Como es el ciclo completo de un CRUD en Rails.
+
+						---
+						## [Bibliografía](#)
+						- [https://guides.rubyonrails.org/v6.1/getting_started.html](https://guides.rubyonrails.org/v6.1/getting_started.html)
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 4: Gemfile](#)
+						## [Clase 9](#)
+						### Gemfile y Heroku
+						---
+						### Clase 9
+						## [El Gemfile.](#)
+
+						- Hasta el momento hemos visto que tenemos un archivo  llamado **Gemfile** que lleva un registro de las gemas de nuestro proyecto.
+						- Su funcionamiento depende de una gema llamada [bundler](https://bundler.io/)
+						- Veamos en detalle cuales son su características.
+						---
+						## [Instalando gema.gemfile. bundle.](#) 
+						
+						- El Gemfile describe las dependencias de gemas requeridas en nuestro proyecto Ruby on Rails.
+						- Se evalúa como código Ruby, y nos exibe una serie de métodos necesarios para su ejecución.
+
+						Los métodos mencionados se describen a continuación:
+
+						---
+						#### Source:
+						- Jace referencia al origen de donde se van a descargar cada una de las gemas del proyecto.
+						- En nuestro caso se van a extraer de "https://rubygems.org":
+
+						```ruby
+							source "https://rubygems.org"
+						```
+
+						---
+						### ruby
+
+						- Este método nos indica la version de Ruby necesaria para el proyecto:
+
+						```ruby
+							ruby "1.9.3"
+						```
+						---
+						#### gem
+
+						- Este método tomará especificará cada una de la gemas del proyecto.
+						- Como argumentos principal requiere el nombre y los demas atributos son opcionales.
+
+						```ruby
+							gem "nokogiri", ">= 1.4.2"
+						```
+						---
+						## [fijar la versión de una gema en el gemfile.](#)
+						
+						- A pesar de que la versión es un atributo opcional en el método **gem**, es una buena práctica especificar 
+						la versión la version de la misma.
+
+						Podemos especificar la version exacta
+
+						```ruby
+						 gem 'rails', '5.0.0'
+						```
+						---
+						En el caso de **>= 1.0**, especifica que la versión debe ser mayor o igual a 1.0. 
+						
+						```ruby
+							gem 'rack',  '>=1.0'	
+						```
+						---
+
+						En el caso de **~> 2.1** significa que la versión a instalar debe estar comprendida entre **>= 2.1** y **< 3.0**
+						
+						```ruby
+							gem 'thin',  '~>2.1'
+						```
+						---
+						Tambien podemos especificar si la gema funcionará en un entorno específico (development, test, production):
+
+						```ruby
+							gem "rspec", :group => :test
+							gem "wirble", :groups => [:development, :test]
+						```
+						---
+						## [Creando una cuenta Heroku.](#)
+						
+						### Que es Heroku?
+
+						Heroku es un servicio de hosting que provee soporte para diferentes lenguage de programación, en los cuales se encuentra ruby y el framework Ruby on Rails.
+
+						---
+						### Características: 
+						- Nos brinda la posibilidad de tener nuestro proyecto Ruby on Rails funcionará de manera facil.
+						- Nos provee alojamiento y soporte para nuestra base de datos en PosgreSQL.
+						- Podemos hacer el deployment de nuestro proyecto directamente desde github de manera automática.
+						
+						---
+						## [Primeros pasos en Heroku](#)
+
+						A continuación veremos detallados los pasos para comenzar a usar heroku:
+
+						Primeros debemos registrarnos en heroku para obtener un cuenta de usuario en: 
+					
+						[https://signup.heroku.com/](#)
+
+						---
+						## [Heroku CLI](#)
+
+						- Una vez creada nuestra cuenta debemos instalar el **Heroku CLI**.
+						-	Es un "cliente" que nos brinda comandos para poder enviar nuestro proyecto Ruby on Rails a Heroku.
+
+						---
+
+						En este link encontraras las instrucciones de instalación del cliente dependiendo del SO.
+
+						[https://devcenter.heroku.com/articles/heroku-cli](https://devcenter.heroku.com/articles/heroku-cli)
+
+						---
+
+						En el caso de MacOS tenemos este comando:
+
+						```console
+						$ brew tap heroku/brew && brew install heroku
+						```
+						En el caso de usar WSL2(Ubuntu) tenemos esta otra opción:
+
+						```console
+						$ curl https://cli-assets.heroku.com/install.sh | sh
+						```
+						---
+						## [Límites de una app gratuita en Heroku.](#)
+
+						El plan gratuito ofrece: 
+						- Un límite de 10.000 filas en la base de datos.
+						- Se puede crear hasta 5 aplicaciones.
+						- Admite 2 copias de seguridad de bases de datos por cada base de datos.
+						
+						---
+						
+						## [Qué vimos hoy?](#)
+						- Vimos que es el Gemfile y sus características. 
+						- Vimos como crear una cuenta Heroku e instalar el cliente de Heroku.
+						- Aprendimos sobre los límites de una app gratuita en Heroku.
+
+						---
+						## [Bibliografía](#)
+						- [https://bundler.io/](https://bundler.io/)
+						- [https://devcenter.heroku.com](https://devcenter.heroku.com/articles/heroku-cli)
+						- [https://tudip.com/es/blog-post/heroku-es/](https://tudip.com/es/blog-post/heroku-es/)
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

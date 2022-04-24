@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Introducción al Desarrollo de Aplicaciones con Ruby on Rails | AIEP</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css" integrity="sha512-ITH3NSfntO7uI5n+BnxGNXpzDUoOsmAXuG37UDONLxNYIdc0EBBOOQ1xyc+t9ag9ETSuBXFApx+Rod0uURfDYw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/solarized.min.css" integrity="sha512-sUF1FAUpi9yPXCDOPsRwzh71zrCVkcT4SfwxBlQeHwMbH1aTGcSdI00GRLaH6iXRSBTazGH/u6sGQTc1tGqofg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/zenburn.min.css" integrity="sha512-JPxjD2t82edI35nXydY/erE9jVPpqxEJ++6nYEoZEpX2TRsmp2FpZuQqZa+wBCen5U16QZOkMadGXHCfp+tUdg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-separator="---" data-markdown data-line-numbers>
+    			<textarea data-template>
+						## [Introducción al Desarrollo de Aplicaciones con Ruby on Rails](#)
+						#### Profesor: Fernando Ciballero
+						---
+						## [Unidad 1: Crear un proyecto en Rails](#)
+						## [Clase 2](#)
+						### Estructura de un proyecto Ruby on Rails
+						---
+						## [Estructura de los directorios de un proyecto nuevo en Rails](#)
+						- Nuestro proyecto en Ruby on Rails tendrá una cantidad de archivos y carpetas generados que conforman la estructura de una aplicación Rails. 
+						- A continuación tenemos un resumen básico de la función de cada uno de los archivos y carpetas que Rails crea por defecto.
+						---
+						<img src="https://res.cloudinary.com/dhbkl5d9a/image/upload/v1651711279/modulo8/estructura%20de%20directorios.png" alt="" width="400" height="600">
+						---
+						## [Controladores, Vistas y rutas](#)
+						
+						### Creación de rutas
+						Para que Rails diga "Hola" hay que crear como mínimo: una [ruta](#), un [controlador](#) con una [acción](#) y una [vista](#). 
+						
+						---
+						<img src="https://res.cloudinary.com/dhbkl5d9a/image/upload/v1651713387/modulo8/MVC_drac0w.png" alt="" width="1000" height="500">
+						---
+						- Paso 1: ingresamos una URL en nuestra computadora ej: https://miruta.com/recurso
+						- Paso 2: nuestro archivo de rutas nos dirije a un [controlador#acción](#).
+						- Paso 3: dentro de la acción solicitamos datos a un modelo [Modelo.all](#)
+						- Pasos 4, 5 y 6 : el modelo pide y recibe los datos solicitados de la DDBB para pasarselos al controlador.
+						- Paso 7: el controlador envía los datos obtenidos a una vista.
+						- Paso 8: la vista se renderiza en la pantalla de nuestra computadora.
+						---
+						Empecemos añadiendo una ruta a nuestro archivo de rutas, [config/routes.rb](#).
+
+						```ruby
+						Rails.application.routes.draw do
+							get '/tv_shows', to: 'tv_shows#index'
+						end
+						```
+						---
+						- La ruta anterior declara que las peticiones [get /tv_shows](#) se asignan a la acción index de TvShowsController.
+
+						- Para crear [TvShowsController](#) y su acción de [index](#), ejecutaremos el generador de controladores:
+
+						```ruby
+						$ rails generate controller tv_shows index --skip-routes
+						```
+						---
+						Rails creará varios archivos automáticamente:
+						```console 
+						create  app/controllers/tv_shows_controller.rb
+						invoke  erb
+						create    app/views/tv_shows
+						create    app/views/tv_shows/index.html.erb
+						invoke  test_unit
+						create    test/controllers/tv_shows_controller_test.rb
+						invoke  helper
+						create    app/helpers/tv_shows_helper.rb
+						invoke    test_unit
+						invoke  assets
+						invoke    scss
+						create      app/assets/stylesheets/tv_shows.scss
+						```
+						---
+						El más importante es el archivo del controlador, [app/controllers/tv_shows_controller.rb](#). 
+						---
+						Vamos a echarle un vistazo:
+
+						```ruby
+						class TvShowsController < ApplicationController
+							def index
+							end
+						end
+						```
+						- La acción index está vacía. 
+						- Por convención, Rails renderizará automáticamente una [vista](#) que coincida con el nombre del [controlador](#) y la [acción](#). 
+						- Las vistas se encuentran en el directorio [app/views](#). 
+						- Así que la acción index renderizará [app/views/tv_shows/index.html.erb](#) por defecto.
+
+						---
+						Abramos [app/views/tv_shows/index.html.erb](#), y sustituyamos su contenido por
+
+						```html
+						<h1>¡Hola, Rails!</h1>
+						```
+						---
+						Ahora visita http://localhost:3000/tv_shows, ¡y verás cómo se muestra nuestro texto!
+						---
+
+						## [ERB](#)
+						Dentro de una plantilla ERB, el código Ruby se puede incluir usando las etiquetas:
+						- [<% %>](#): se usan para ejecutar código de Ruby que no devuelve nada, como condiciones, bucles o bloques
+						- [<%= %>](#): etiquetas se usan cuando desea generar resultados(equivalente a puts en Ruby).
+						---
+						### [Ejemplo del uso de las etiquetas en una plantilla ERB:](#)
+						```html
+						<h1>Listado de Series de TV</h1>
+						<% @tv_shows.each do |tv_show| %>
+							Name: <%= tv_show.name %><br>
+						<% end %>
+						```
+						---
+						## [rails console](#)
+						Al igual que en Ruby, tenemos a disposición una consola de comandos que no permitirá
+						interactuar con nuestros datos en un futuro.
+						```console
+						$ rails console
+						```
+						```console
+						Loading development environment (Rails 6.1.5.1)
+						irb(main):001:0>
+						```
+						---
+						## [rails routes(rake routes)](#)
+						De la misma manera podemos visualizar las rutas que hemos creado con el comando:
+						```console
+						$ rails routes
+						```
+						```console
+						   Prefix    Verb      URI Pattern               Controller#Action
+							 tv_shows  GET       /tv_shows/index(.:format) tv_shows#index
+						```
+						---
+						## [Agregando nuevas rutas](#)
+						De ahora en más podemos seguir agregando rutas segun necesitemos, por ej:
+						
+						```ruby
+						Rails.application.routes.draw do
+							get '/tv_shows', to: 'tv_shows#index'
+						
+							root 'tv_shows#index'
+						end
+						```
+						- [root](#) es un método que nos permite definir una ruta por default al
+						inicio de nuesta aplicación.
+						---
+						## [Que aprendimos hoy?](#)
+						- Aprendimos sobre el patron MVC y su flujo de datos.
+						- Creamos nuestra primer ruta, controlador y vista.
+						- Aprendimos nuevos comandos de consola: [rails console](#), [rails routes](#).
+						- Agregamos nuevas rutas.
+						---
+						## [Bibliografía](#)
+						- [https://guides.rubyonrails.org/getting_started.html](https://guides.rubyonrails.org/getting_started.html)
+				  </textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js" integrity="sha512-fEgazVdZLNymIm9n+b2jtCrM4DQiqNTfLNUxbsGSFUJpYemf9A8GxgJ3VAfU/Lc6yZkDdEOdekBDZtG/mf73fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js" integrity="sha512-nLsCkPS/rdxRVOkxiKnld9KhQ24V/5kRChzSZ3MoFODykbWyBlQRsHLrbpN3J4LabYBnXIp1EnRIo3ifvyiQIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js" integrity="sha512-QAU7Ux8iEB53koLKFCtddfFp0D1+uQWoX3ROnRDLeiE98XHOkMciaup0Spc014jQAuJaqz8VjUZdBqriheI4Lg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js" integrity="sha512-U3fPDUX5bMrn1wnYqjaK44MFA9E6MKS+zPAg9WPAGF5XhReBeDj3FGaA831CjueG+YJxYA3WaO/m33kMIoOs/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
